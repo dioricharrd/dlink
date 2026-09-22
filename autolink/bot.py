@@ -8,20 +8,18 @@ def run_automation(target_url, total_loops):
     for i in range(1, total_loops + 1):
       print(f"\n[*] Siklus {i} dari {total_loops} dimulai...")
 
-      browser = p.chromium.launch(
-        headless=True,
-        args=["--no-sandbox", "--disable-dev-shm-usage"],
-      )
-      context = browser.new_context(
-        user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-      )
+      # Buka browser (headless=False agar jendela Chrome terlihat)
+      browser = p.chromium.launch(headless=False)
+      context = browser.new_context()
       page = context.new_page()
 
       try:
-        page.goto(target_url, wait_until="domcontentloaded", timeout=60000)
+        # 1. Buka link web dari input user
+        page.goto(target_url)
         print(f"[SUKSES] Berhasil membuka halaman: {target_url}")
 
-        stay_duration = random.randint(1, 20)
+        # 2. Stay/diam selama rentang waktu acak (10 - 30 detik)
+        stay_duration = random.randint(10, 30)
         print(f"[*] Menahan sesi selama {stay_duration} detik...")
         time.sleep(stay_duration)
 
@@ -33,8 +31,9 @@ def run_automation(target_url, total_loops):
         browser.close()
         print(f"[SUKSES] Sesi {i} ditutup.")
 
+      # Jeda singkat antar perulangan
       if i < total_loops:
-        cooldown = 3
+        cooldown = random.randint(3, 6)
         print(f"[*] Jeda {cooldown} detik sebelum siklus berikutnya...")
         time.sleep(cooldown)
 
